@@ -1,0 +1,25 @@
+{
+  "name": "talkstream",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm run start --prefix backend"
+  },
+  "keywords": ["chat", "video-call", "mern", "webrtc"],
+  "author": "Your Name",
+  "license": "ISC",
+  "description": "TalkStream - Real-time chat and video calling web app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chtholly939/TalkStream-video-chat-app.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/chtholly939/TalkStream-video-chat-app/issues"
+  },
+  "homepage": "https://github.com/chtholly939/TalkStream-video-chat-app",
+  "dependencies": {
+    "nodemailer": "^8.0.5"
+  }
+}
