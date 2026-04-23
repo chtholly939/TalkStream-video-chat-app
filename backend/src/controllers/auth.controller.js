@@ -62,7 +62,7 @@ export async function signup(req, res) {
     
   } catch (error) {
     console.log("Error in signup controller", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
@@ -75,20 +75,39 @@ export async function login(req, res) {
     }
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ message: "Invalid email or password" });
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
     const isPasswordCorrect = await user.matchPassword(password);
-    if (!isPasswordCorrect) return res.status(401).json({ message: "Invalid email or password" });
 
-    res.status(201).json({
-      success: true,
-      message: "OTP sent to email",
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // 🔐 generate JWT
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "7d" }
+    );
+
+    // 🍪 set cookie
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      secure: process.env.NODE_ENV === "production",
     });
 
-    res.status(200).json({ success: true, user });
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+
   } catch (error) {
     console.log("Error in login controller", error.message);
-    res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
@@ -196,8 +215,8 @@ export async function verifyOtp(req, res) {
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      sameSite: "strict", // for local dev
-      secure: false,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      secure: process.env.NODE_ENV === "production",
     });
 
     return res.status(200).json({
