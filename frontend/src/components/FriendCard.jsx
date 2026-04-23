@@ -9,7 +9,7 @@ const FriendCard = ({ friend }) => {
           <div className="avatar size-12">
             <div className="w-14 h-14 rounded-full overflow-hidden">
               <img
-                src={friend.profilePic}
+                src={friend?.profilePic || "/default-avatar.png"}
                 alt={friend.fullName}
                 className="w-full h-full object-cover"
               />

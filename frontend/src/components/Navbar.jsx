@@ -38,7 +38,7 @@ const Navbar = () => {
             <Link to="/profile" className="avatar">
               <div className="w-8 sm:w-9 rounded-full cursor-pointer overflow-hidden">
                 <img
-                  src={authUser?.profilePic}
+                  src={authUser?.profilePic || "/default-avatar.png"}
                   alt="User Avatar"
                   className="w-full h-full object-cover"
                 />

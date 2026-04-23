@@ -51,7 +51,7 @@ const NotificationsPage = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className="avatar w-14 h-14 rounded-full bg-base-300">
-                              <img src={request.sender.profilePic} alt={request.sender.fullName} />
+                              <img src={request?.sender?.profilePic || "/default-avatar.png"} />
                             </div>
                             <div>
                               <h3 className="font-semibold">{request.sender.fullName}</h3>
@@ -81,27 +81,37 @@ const NotificationsPage = () => {
                   New Connections
                 </h2>
 
-                <div className="space-y-3">
-                  {acceptedRequests.map((notification) => (
+              <div className="space-y-3">
+                {acceptedRequests.map((notification) => {
+                  // 🔥 prevent crash completely
+                  if (!notification?.recipient) return null;
+
+                  return (
                     <div key={notification._id} className="card bg-base-200 shadow-sm">
                       <div className="card-body p-4">
                         <div className="flex items-start gap-3">
                           <div className="avatar mt-1 size-10 rounded-full">
                             <img
-                              src={notification.recipient.profilePic}
-                              alt={notification.recipient.fullName}
+                              src={notification.recipient.profilePic || "/default-avatar.png"}
+                              alt={notification.recipient.fullName || "user"}
                             />
                           </div>
+
                           <div className="flex-1">
-                            <h3 className="font-semibold">{notification.recipient.fullName}</h3>
+                            <h3 className="font-semibold">
+                              {notification.recipient.fullName || "User"}
+                            </h3>
+
                             <p className="text-sm my-1">
-                              {notification.recipient.fullName} accepted your friend request
+                              {notification.recipient.fullName || "Someone"} accepted your friend request
                             </p>
+
                             <p className="text-xs flex items-center opacity-70">
                               <ClockIcon className="h-3 w-3 mr-1" />
                               Recently
                             </p>
                           </div>
+
                           <div className="badge badge-success">
                             <MessageSquareIcon className="h-3 w-3 mr-1" />
                             New Friend
@@ -109,8 +119,9 @@ const NotificationsPage = () => {
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
+              </div>
               </section>
             )}
 
