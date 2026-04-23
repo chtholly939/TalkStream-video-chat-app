@@ -25,31 +25,38 @@ const FriendsPage = () => {
 
       const client = StreamChat.getInstance(STREAM_API_KEY);
 
-      await client.connectUser(
-        {
-          id: authUser._id,
-          name: authUser.fullName,
-          image: authUser.profilePic,
-        },
-        tokenData.token
-      );
-
-      const filters = {
-        type: "messaging",
-        members: { $in: [authUser._id] },
-      };
-
-      const channels = await client.queryChannels(
-        filters,
-        { last_message_at: -1 },
-        {
-          watch: true,
-          state: true,
-          presence: true, // 🔥 THIS ENABLES ONLINE STATUS
+      try {
+        // 🔥 ADD THIS CHECK
+        if (!client.userID) {
+          await client.connectUser(
+            {
+              id: authUser._id,
+              name: authUser.fullName,
+              image: authUser.profilePic,
+            },
+            tokenData.token
+          );
         }
-      );
 
-      setChannels(channels);
+        const filters = {
+          type: "messaging",
+          members: { $in: [authUser._id] },
+        };
+
+        const channels = await client.queryChannels(
+          filters,
+          { last_message_at: -1 },
+          {
+            watch: true,
+            state: true,
+            presence: true,
+          }
+        );
+
+        setChannels(channels);
+      } catch (error) {
+        console.error("Error in friends init:", error);
+      }
     };
 
     init();
@@ -80,12 +87,12 @@ const FriendsPage = () => {
             {/* Avatar */}
             <div className="relative">
               <img
-                src={otherUser?.image}
+                src={otherUser?.image || "/default-avatar.png"}
                 className="w-12 h-12 rounded-full object-cover"
               />
 
               {/* Online dot (temporary fake) */}
-              {otherUser?.online && (
+              {otherUser && otherUser.online && (
                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-base-100"></span>
               )}
             </div>
