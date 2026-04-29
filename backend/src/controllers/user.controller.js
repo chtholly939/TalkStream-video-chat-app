@@ -20,6 +20,22 @@ export async function getRecommendedUsers(req, res) {
   }
 }
 
+export async function getAllUsers(req, res) {
+  try {
+    const currentUserId = req.user.id;
+
+    const users = await User.find({
+      _id: { $ne: currentUserId },
+      isOnboarded: true,
+    });
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error in getAllUsers controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
 export async function getMyFriends(req, res) {
   try {
     const user = await User.findById(req.user.id)
