@@ -70,3 +70,8 @@ export const verifyOtp = async (data) => {
   const res = await axiosInstance.post("/auth/verify-otp", data);
   return res.data;
 };
+
+export const updateProfile = async (data) => {
+  const res = await axiosInstance.put("/users/profile", data);
+  return res.data;
+};

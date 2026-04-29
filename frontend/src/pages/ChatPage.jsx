@@ -49,6 +49,8 @@ const ChatPage = () => {
               id: authUser._id,
               name: authUser.fullName,
               image: authUser.profilePic,
+              location: authUser.location, 
+              status: authUser.status,
             },
             tokenData.token
           );
@@ -95,7 +97,37 @@ const ChatPage = () => {
           <div className="w-full relative">
             <CallButton handleVideoCall={handleVideoCall} />
             <Window>
-              <ChannelHeader />
+              {(() => {
+                const otherUser = Object.values(channel.state.members).find(
+                  (m) => m.user.id !== authUser._id
+                )?.user;
+
+                return (
+                  <div className="flex items-center gap-3 p-3 border-b border-base-300 bg-base-100">
+                    
+                    {/* Avatar */}
+                    <img
+                      src={
+                        otherUser?.image ||
+                        otherUser?.profilePic ||
+                        "/default-avatar.png"
+                      }
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+
+                    {/* Name + Location */}
+                    <div className="flex flex-col">
+                      <span className="font-semibold">
+                        {otherUser?.name || "User"}
+                      </span>
+
+                      <span className="text-xs opacity-70 flex items-center gap-1">
+                        📍 {otherUser?.location || "Unknown location"}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
               <MessageList />
               {channel.state.typing && Object.values(channel.state.typing).length > 0 && (
                 <div className="px-4 py-2 text-sm text-gray-500">

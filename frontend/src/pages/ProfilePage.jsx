@@ -58,6 +58,44 @@ const OnboardingPage = () => {
     toast.success("Random profile picture generated!");
   };
 
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation not supported");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const data = await res.json();
+
+          const city =
+            data.address.city ||
+            data.address.town ||
+            data.address.village ||
+            data.address.state;
+
+          setFormState((prev) => ({
+            ...prev,
+            location: city || "Unknown",
+          }));
+
+          toast.success("Location updated!");
+        } catch (err) {
+          toast.error("Failed to fetch location");
+        }
+      },
+      () => {
+        toast.error("Location permission denied");
+      }
+    );
+  };
+
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center p-4">
       <div className="card bg-base-200 w-full max-w-3xl shadow-xl">
@@ -140,18 +178,26 @@ const OnboardingPage = () => {
               </div>
             </div>
 
+            <button
+              type="button"
+              className="btn btn-outline mt-2"
+              onClick={detectLocation}
+            >
+              Auto Detect Location
+            </button>
+            
             {/* SUBMIT BUTTON */}
 
             <button className="btn btn-primary w-full" disabled={isPending} type="submit">
               {!isPending ? (
                 <>
                   <ShipWheelIcon className="size-5 mr-2" />
-                  Complete Onboarding
+                  Save Profile
                 </>
               ) : (
                 <>
                   <LoaderIcon className="animate-spin size-5 mr-2" />
-                  Onboarding...
+                  Saving...
                 </>
               )}
             </button>

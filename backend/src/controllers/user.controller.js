@@ -146,3 +146,26 @@ export async function getOutgoingFriendReqs(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+export async function updateProfile(req, res) {
+  try {
+    const userId = req.user.id;
+
+    const { location } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          location: location || "",
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error in updateProfile controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
