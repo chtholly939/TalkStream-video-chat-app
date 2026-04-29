@@ -6,6 +6,8 @@ import {
   getRecommendedUsers,
   updateProfile,
   getAllUsers,
+  acceptFriendRequest,
+  getFriendRequests,
   sendFriendRequest,
 } from "../controllers/user.controller.js";
 
